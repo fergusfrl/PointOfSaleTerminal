@@ -1,0 +1,21 @@
+{
+  "name": "pointofsalecalculator",
+  "version": "1.0.0",
+  "description": "a class library for point-of-sale scanning system",
+  "main": "dist/src/index.js",
+  "scripts": {
+    "exec": "node dist/src/index",
+    "build": "npx tsc",
+    "test": "jest"
+  },
+  "author": "Fergus Farrell",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jest": "^25.2.1",
+    "@types/node": "^13.11.1",
+    "jest": "^25.3.0"
+  },
+  "dependencies": {
+    "typescript": "^3.8.3"
+  }
+}
