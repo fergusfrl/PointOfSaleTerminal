@@ -78,10 +78,10 @@ test('it calculates the total price for multiple items ', () => {
 
     // set pricing
     terminal.setPricing({
-        A: new PriceModel('A', 1.25, { count: 3, price: 3 }),
-        B: new PriceModel('B', 4.25),
-        C: new PriceModel('C', 1, { count: 6, price: 5 }),
-        D: new PriceModel('D', 0.75)
+        A: new PriceModel(1.25, { count: 3, price: 3 }),
+        B: new PriceModel(4.25),
+        C: new PriceModel(1, { count: 6, price: 5 }),
+        D: new PriceModel(0.75)
     });
 
     // scan items
@@ -97,10 +97,10 @@ test('it calculates the total price for a single item multiple times accurately'
 
     // set pricing
     terminal.setPricing({
-        A: new PriceModel('A', 1.25, { count: 3, price: 3 }),
-        B: new PriceModel('B', 4.25),
-        C: new PriceModel('C', 1, { count: 6, price: 5 }),
-        D: new PriceModel('D', 0.75)
+        A: new PriceModel(1.25, { count: 3, price: 3 }),
+        B: new PriceModel(4.25),
+        C: new PriceModel(1, { count: 6, price: 5 }),
+        D: new PriceModel(0.75)
     });
 
     // scan items
@@ -116,10 +116,10 @@ test('it calculates the total price of only single items accurately', () => {
 
     // set pricing
     terminal.setPricing({
-        A: new PriceModel('A', 1.25, { count: 3, price: 3 }),
-        B: new PriceModel('B', 4.25),
-        C: new PriceModel('C', 1, { count: 6, price: 5 }),
-        D: new PriceModel('D', 0.75)
+        A: new PriceModel(1.25, { count: 3, price: 3 }),
+        B: new PriceModel(4.25),
+        C: new PriceModel(1, { count: 6, price: 5 }),
+        D: new PriceModel(0.75)
     });
 
     // scan items
@@ -136,10 +136,10 @@ test('it prints a warning when scanned items do not have a price model', () => {
 
     // set pricing
     terminal.setPricing({
-        A: new PriceModel('A', 1.25, { count: 3, price: 3 }),
-        B: new PriceModel('B', 4.25),
-        C: new PriceModel('C', 1, { count: 6, price: 5 }),
-        D: new PriceModel('D', 0.75)
+        A: new PriceModel(1.25, { count: 3, price: 3 }),
+        B: new PriceModel(4.25),
+        C: new PriceModel(1, { count: 6, price: 5 }),
+        D: new PriceModel(0.75)
     });
 
     // scan items
@@ -158,10 +158,10 @@ test('it prints a warning and continues when scanned items do not have a price m
 
     // set pricing
     terminal.setPricing({
-        A: new PriceModel('A', 1.25, { count: 3, price: 3 }),
-        B: new PriceModel('B', 4.25),
-        C: new PriceModel('C', 1, { count: 6, price: 5 }),
-        D: new PriceModel('D', 0.75)
+        A: new PriceModel(1.25, { count: 3, price: 3 }),
+        B: new PriceModel(4.25),
+        C: new PriceModel(1, { count: 6, price: 5 }),
+        D: new PriceModel(0.75)
     });
 
     // scan items
