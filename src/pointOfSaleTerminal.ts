@@ -30,16 +30,19 @@ module.exports = class PointOfSaleTerminal {
     }
 
     /**
-     * Calculates the total cost of all scanned items for a given price model
+     * Calculates the total cost of all scanned items using a given price model
      * 
      * @returns {number} total to be paid
      */
     calculateTotal(): number {
         const repeats: Repeats = this.findRepeats(this.scannedProducts);
-        const scannedItems: string[] = Object.keys(repeats);
+        const scannedProductIds: string[] = Object.keys(repeats);
+
         let totalPrice: number = 0.0;
         
-        for(const item of scannedItems) {
+        // loop through each unique scanned item
+        for(const item of scannedProductIds) {
+            // get scanned items price model
             const priceModal = this.priceModel[item];
 
             if (!priceModal) {
@@ -50,12 +53,16 @@ module.exports = class PointOfSaleTerminal {
             const bulkPrices: BulkPrice = priceModal.getBulkPrice();
             let noOfRepeatsRemaining: number = repeats[item];
 
+            // add bulk items total costs
             if(bulkPrices && bulkPrices.count <= noOfRepeatsRemaining) {
-                const bulkTotal: BulkTotal = this.calculateBulkTotal(bulkPrices.price, bulkPrices.count, noOfRepeatsRemaining);
+                const bulkTotal: BulkTotal = this.calculateBulkTotal(
+                    bulkPrices.price, bulkPrices.count, noOfRepeatsRemaining);
+
                 totalPrice += bulkTotal.price;
                 noOfRepeatsRemaining = bulkTotal.remainder;
             }
 
+            // add single items total costs
             totalPrice += this.calculateSinglesTotal(
                 priceModal.getSinglePrice(), noOfRepeatsRemaining);
         }
@@ -65,6 +72,7 @@ module.exports = class PointOfSaleTerminal {
 
     /**
      * Calculates the price for bulk items and the remainder of items which do not belong to a bulk buy.
+     * eg. 
      * 
      * @param {number} bulkPrice 
      * @param {number} bulkCount 

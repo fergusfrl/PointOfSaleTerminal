@@ -1,10 +1,10 @@
 {
   "name": "pointofsalecalculator",
   "version": "1.0.0",
-  "description": "a class library for point-of-sale scanning system",
-  "main": "dist/src/index.js",
+  "description": "a class library for a point-of-sale scanning system",
+  "main": "dist/index.js",
   "scripts": {
-    "exec": "node dist/src/index",
+    "exec": "node dist/index",
     "build": "npx tsc",
     "test": "jest"
   },
