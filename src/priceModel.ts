@@ -1,21 +1,23 @@
 'use strict';
 
-import { BulkPrice } from './types';
+import { IBulkPrice, IPriceModel } from './types';
 
-module.exports = class PriceModel {
-    singlePrice: number;
-    bulkPrice: null|BulkPrice;
+module.exports = class PriceModel implements IPriceModel {
+    private productId: string;
+    private prices: IBulkPrice[];
 
-    constructor(singlePrice: number, bulkPrice:null|BulkPrice = null) {
-        this.singlePrice = singlePrice;
-        this.bulkPrice = bulkPrice;
+    constructor(productId: string, prices: IBulkPrice[]) {
+        this.productId = productId;
+        this.prices = prices;
     }
 
-    getSinglePrice(): number {
-        return this.singlePrice;
+    getProductId(): string {
+        return this.productId;
     }
 
-    getBulkPrice(): null|BulkPrice {
-        return this.bulkPrice;
+    getPrices(): IBulkPrice[] {
+        return this.prices
+            .sort((a, b) => (a.getBulkCount() > b.getBulkCount()) ? 1 : -1);
+            // remove duplicates
     }
 }

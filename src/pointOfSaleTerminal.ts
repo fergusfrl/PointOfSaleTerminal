@@ -1,13 +1,13 @@
 'use strict';
 
-import { BulkPrice, BulkTotal, Repeats } from './types';
+import { Repeats, IPriceModel, IBulkPrice, IPointOfSaleTerminal } from './types';
 
-module.exports = class PointOfSaleTerminal {
-    private priceModel: any;
+module.exports = class PointOfSaleTerminal implements IPointOfSaleTerminal {
+    private priceModels: IPriceModel[];
     private scannedProducts: string[];
 
     constructor() {
-        this.priceModel = {};
+        this.priceModels = [];
         this.scannedProducts = [];
     }
 
@@ -16,8 +16,8 @@ module.exports = class PointOfSaleTerminal {
      * 
      * @param priceModel 
      */
-    setPricing(priceModel: any): void {
-        this.priceModel = priceModel;
+    setPricing(priceModels: IPriceModel[]): void {
+        this.priceModels = priceModels;
     }
 
     /**
@@ -36,68 +36,84 @@ module.exports = class PointOfSaleTerminal {
      */
     calculateTotal(): number {
         const repeats: Repeats = this.findRepeats(this.scannedProducts);
-        const scannedProductIds: string[] = Object.keys(repeats);
-
         let totalPrice: number = 0.0;
-        
-        // loop through each unique scanned item
-        for(const item of scannedProductIds) {
-            // get scanned items price model
-            const priceModal = this.priceModel[item];
 
-            if (!priceModal) {
-                console.warn(`Scanned item "${item}" does not have a price model. This item will be ignored.`)
+        for(const productId in repeats) {
+            const priceModel = this.priceModels.find(model => model.getProductId() === productId);
+
+            if(!priceModel) {
+                console.warn(`Product with ID "${productId}" does not exist. Ignoring this product.`);
                 continue;
             }
 
-            const bulkPrices: BulkPrice = priceModal.getBulkPrice();
-            let noOfRepeatsRemaining: number = repeats[item];
-
-            // add bulk items total costs
-            if(bulkPrices && bulkPrices.count <= noOfRepeatsRemaining) {
-                const bulkTotal: BulkTotal = this.calculateBulkTotal(
-                    bulkPrices.price, bulkPrices.count, noOfRepeatsRemaining);
-
-                totalPrice += bulkTotal.price;
-                noOfRepeatsRemaining = bulkTotal.remainder;
-            }
-
-            // add single items total costs
-            totalPrice += this.calculateSinglesTotal(
-                priceModal.getSinglePrice(), noOfRepeatsRemaining);
+            const bulkCounts: number[] = priceModel.getPrices().map(bulkPrice => bulkPrice.getBulkCount());
+            const possibleCombinations: number[][] = this.getCombinations(repeats[productId], bulkCounts);
+            const cheapestCombinationCost: number = this.calculateCombinationsCheapestCost(
+                priceModel.getPrices(), possibleCombinations);
+            totalPrice += cheapestCombinationCost;
         }
 
         return totalPrice;
     }
 
     /**
-     * Calculates the price for bulk items and the remainder of items which do not belong to a bulk buy.
-     * eg. 
      * 
-     * @param {number} bulkPrice 
-     * @param {number} bulkCount 
-     * @param {number} repeatCount 
-     * 
-     * @returns {{ price: number, remainder: number }}
+     * @param noOfRepeats 
+     * @param bulkCounts 
      */
-    private calculateBulkTotal(bulkPrice: number, bulkCount: number, repeatCount: number): BulkTotal {
-        const bulkBuys = Math.floor(repeatCount / bulkCount);
-        return {
-            price: bulkBuys * bulkPrice,
-            remainder: repeatCount - bulkBuys * bulkCount
-        };
+    private getCombinations(noOfRepeats: number, bulkCounts: number[]): number[][] {
+        const combiations: number[][] = [];
+
+        const findCombinations = (i: number, remaining: number, currentCombination: number[]) => {
+            if(remaining < 0) {
+                return;
+            }
+
+            if(remaining === 0) {
+                combiations.push(currentCombination);
+                return;
+            }
+
+            for(let j = i; j < bulkCounts.length; j++) {
+                const candidate = bulkCounts[j];
+                const maxCount = Math.floor(remaining / candidate);
+
+                for(let count = maxCount; count > 0; count--) {
+                    remaining -= count*candidate;
+                    findCombinations(j+1, remaining, currentCombination.concat(Array(count).fill(candidate)));
+                    remaining += count*candidate;
+                }
+            }
+        }
+
+        findCombinations(0, noOfRepeats, []);
+        return combiations;
     }
 
     /**
-     * Calculates the price for multiple non-bulk items
      * 
-     * @param {number} price 
-     * @param {number} count 
-     * 
-     * @returns {number}
+     * @param bulkPrices 
+     * @param combinations 
      */
-    private calculateSinglesTotal(price: number, count: number): number {
-        return price * count;
+    private calculateCombinationsCheapestCost(bulkPrices: IBulkPrice[], combinations: number[][]): number {
+        return combinations
+            .map(combination => this.calculateCombinationCost(bulkPrices, combination))
+            .reduce((prev, curr) => prev < curr ? prev : curr);
+    }
+
+    /**
+     * 
+     * @param bulkPrices 
+     * @param combination 
+     */
+    private calculateCombinationCost(bulkPrices: IBulkPrice[], combination: number[]): number {
+        return combination
+            .map((bulkCount: number) => 
+                bulkPrices.find((bulkPrice: IBulkPrice) => 
+                    bulkPrice.getBulkCount() === bulkCount
+                )?.getPrice() || 0
+            )
+            .reduce((prev: number, curr: number) => prev + curr, 0);
     }
 
     /**
