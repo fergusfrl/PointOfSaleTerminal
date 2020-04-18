@@ -23,6 +23,14 @@ You will be prompted to enter the scanned products. Products should be seperated
 
 > eg. A,A,B,C,A,B,D,A
 
+Available products include:
+| Product | Scannable ID | Single Price | Bulk Price  |
+|---------|--------------|--------------|-------------|
+| apple   | A            | $1.25        | 3 for $3.00 |
+| banana  | B            | $4.25        |             |
+| candy   | C            | $1.00        | 6 for $5.00 |
+| date    | D            | $0.75        |             |
+
 ### Running Test Cases
 ```js
 // runs a suite of tests on the PointOfSaleTerminal class
