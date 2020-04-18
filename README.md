@@ -39,11 +39,15 @@ $ npm test
     const terminal = new PointOfSaleTerminal();
     ```
 **methods**
-* setPricing({ string: PricingModel })
+* setPricing(PriceModel[])
 
     sets pricing model
     ```js
-    terminal.setPricing({ A: pricingModel });
+    terminal.setPricing([
+        priceModelOne,
+        priceModelTwo,
+        priceModelThree
+    ]);
     ```
 * scanProduct(string)
 
@@ -58,22 +62,49 @@ $ npm test
     terminal.calculateTotal();
     ```
 
-> ### PriceModel
+<br>
+
+> ### BulkPrice
 **constructors**
-* PriceModel(number, number)
+* BulkPrice(number, number)
     ```js
-    const priceModel = new PriceModel(3, 2.75);
+    const bulkPrice = new BulkPrice(1, 3)
     ```
 **methods**
-* getCount()
+* getBulkCount()
 
-    returns the bulk count
+    returns the number of items required to be a bulk
     ```js
-    priceModel.getCount();
+    bulkPrice.getBulkCount();
     ```
 * getPrice()
 
+    returns the price for the bulk amount
+    ```js
+    bulkPrice.getPrice();
+    ```
+
+<br>
+
+> ### PriceModel
+**constructors**
+* PriceModel(string, BulkPrice[])
+    ```js
+    const priceModel = new PriceModel('apples', [
+        bulkPriceOne,
+        bulkPriceTwo
+    ]);
+    ```
+**methods**
+* getProductId()
+
+    returns the bulk count
+    ```js
+    priceModel.getProductId();
+    ```
+* getPrices()
+
     returns the bulk price
     ```js
-    priceModel.getPrice();
+    priceModel.getPrices();
     ```

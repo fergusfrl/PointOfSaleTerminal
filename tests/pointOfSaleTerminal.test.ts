@@ -1,7 +1,5 @@
 import { IPointOfSaleTerminal } from "../src/types";
 
-export {};
-
 const PointOfSaleTerminal = require('../src/pointOfSaleTerminal');
 const PriceModel = require('../src/priceModel');
 const BulkPrice = require('../src/bulkPrice');
@@ -98,6 +96,71 @@ test('it prints a warning and continues when scanned items do not have a price m
     // then
     expect(result).toBe(7.25);
     expect(console.warn).toBeCalledTimes(1);
+});
+
+test('it successfully calculates price given single item price models only', () => {
+    const terminal = new PointOfSaleTerminal();
+
+        // given
+        terminal.setPricing([
+            new PriceModel('apple', [new BulkPrice(1, 1)]),
+            new PriceModel('banana', [new BulkPrice(1, 1.25)]),
+            new PriceModel('candy', [new BulkPrice(1, 3.12)]),
+        ]);
+        scanMultipleProducts(terminal, ['apple', 'candy', 'candy', 'banana']);
+    
+        // when
+        const result = terminal.calculateTotal();
+    
+        // then
+        expect(result).toBe(8.49);
+});
+
+test('it successfully calculates price given multiple bulk prices', () => {
+    const terminal = new PointOfSaleTerminal();
+
+    // given
+    terminal.setPricing([
+        new PriceModel('A', [
+            new BulkPrice(1, 1),
+            new BulkPrice(5, 4.5),
+            new BulkPrice(10, 8),
+            new BulkPrice(50, 30)
+        ])
+    ]);
+    scanMultipleProducts(terminal, ['A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A']);
+
+    // when
+    const result = terminal.calculateTotal();
+
+    // then
+    expect(result).toBe(20.5);
+});
+
+test('it successfully calculates price given multiple bulk prices', () => {
+    const terminal = new PointOfSaleTerminal();
+
+    // given
+    terminal.setPricing([
+        new PriceModel('A', [
+            new BulkPrice(1, 1),
+            new BulkPrice(5, 4.5),
+            new BulkPrice(10, 8),
+            new BulkPrice(50, 30)
+        ]),
+        new PriceModel('B', [
+            new BulkPrice(1, 8),
+            new BulkPrice(2, 15),
+            new BulkPrice(5, 10)
+        ])
+    ]);
+    scanMultipleProducts(terminal, ['B', 'B', 'A', 'B', 'A', 'A', 'B', 'A', 'A', 'B', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'A', 'B', 'B']);
+
+    // when
+    const result = terminal.calculateTotal();
+
+    // then
+    expect(result).toBe(37.5);
 });
 
 // test utils

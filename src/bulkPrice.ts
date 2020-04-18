@@ -11,10 +11,20 @@ module.exports = class BulkPrice implements IBulkPrice {
         this.price = price;
     }
 
+    /**
+     * get the bulk count
+     * 
+     * @returns the number of individual items required to fit in a bulk order
+     */
     getBulkCount(): number {
         return this.bulkCount;
     }
 
+    /**
+     * get the price for this bulk order
+     * 
+     * @returns the price for this bulk order
+     */
     getPrice(): number {
         return this.price;
     }
