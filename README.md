@@ -1,5 +1,6 @@
 # Point of Sale Terminal
 A point-of-sale scanning system class library. Accepts a list of products then calculates the total price given a preconfigured single and bulk cost.
+This scanning library has been designed to optimise for cost. The cheapest option of scanned items is always given.
 
 <br>
 
